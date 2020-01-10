@@ -1,0 +1,57 @@
+Date: Tue, 30 Oct 2018 13:25:21 -0400
+From: linville@redhat.com
+To: rhkernel-list@redhat.com
+Cc: Lin Liu <linl@redhat.com>
+Subject: [RHEL7 06/28] net: ena: fix potential double ena_destroy_device()
+
+From: "John W. Linville" <linville@redhat.com>
+
+BZ: https://bugzilla.redhat.com/show_bug.cgi?id=1633418
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=18850510
+
+ena_destroy_device() can potentially be called twice.
+To avoid this, check that the device is running and
+only then proceed destroying it.
+
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit fe870c77efdf8682252545cbd3d29800d8379efc)
+Signed-off-by: John W. Linville <linville@redhat.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 5b32fbc6ed5d..41e59e5db064 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -2549,6 +2549,9 @@ static void ena_destroy_device(struct ena_adapter *adapter, bool graceful)
+ 	struct ena_com_dev *ena_dev = adapter->ena_dev;
+ 	bool dev_up;
+ 
++	if (!test_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags))
++		return;
++
+ 	netif_carrier_off(netdev);
+ 
+ 	del_timer_sync(&adapter->timer_service);
+@@ -2585,6 +2588,7 @@ static void ena_destroy_device(struct ena_adapter *adapter, bool graceful)
+ 	adapter->reset_reason = ENA_REGS_RESET_NORMAL;
+ 
+ 	clear_bit(ENA_FLAG_TRIGGER_RESET, &adapter->flags);
++	clear_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags);
+ }
+ 
+ static int ena_restore_device(struct ena_adapter *adapter)
+@@ -2629,6 +2633,7 @@ static int ena_restore_device(struct ena_adapter *adapter)
+ 		}
+ 	}
+ 
++	set_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags);
+ 	mod_timer(&adapter->timer_service, round_jiffies(jiffies + HZ));
+ 	dev_err(&pdev->dev, "Device reset completed successfully\n");
+ 
+-- 
+2.17.1
+
+

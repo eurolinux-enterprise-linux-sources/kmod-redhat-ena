@@ -1,0 +1,40 @@
+Date: Tue, 30 Oct 2018 13:25:40 -0400
+From: linville@redhat.com
+To: rhkernel-list@redhat.com
+Cc: Lin Liu <linl@redhat.com>
+Subject: [RHEL7 25/28] net: ena: update driver version to 2.0.1
+
+From: "John W. Linville" <linville@redhat.com>
+
+BZ: https://bugzilla.redhat.com/show_bug.cgi?id=1633418
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=18850510
+
+Signed-off-by: Arthur Kiyanovski <akiyano@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 3a7b9d8ddd200bdafaa3ef75b8544d2403eaa03b)
+Signed-off-by: John W. Linville <linville@redhat.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.h b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+index 95c20882b57c..6407112594a6 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.h
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.h
+@@ -43,9 +43,9 @@
+ #include "ena_com.h"
+ #include "ena_eth_com.h"
+ 
+-#define DRV_MODULE_VER_MAJOR	1
+-#define DRV_MODULE_VER_MINOR	5
+-#define DRV_MODULE_VER_SUBMINOR 0
++#define DRV_MODULE_VER_MAJOR	2
++#define DRV_MODULE_VER_MINOR	0
++#define DRV_MODULE_VER_SUBMINOR 1
+ 
+ #define DRV_MODULE_NAME		"ena"
+ #ifndef DRV_MODULE_VERSION
+-- 
+2.17.1
+
+

@@ -1,0 +1,48 @@
+Date: Tue, 30 Oct 2018 13:25:18 -0400
+From: linville@redhat.com
+To: rhkernel-list@redhat.com
+Cc: Lin Liu <linl@redhat.com>
+Subject: [RHEL7 03/28] net: ena: fix surprise unplug NULL dereference kernel
+ crash
+
+From: "John W. Linville" <linville@redhat.com>
+
+BZ: https://bugzilla.redhat.com/show_bug.cgi?id=1633418
+Brew: https://brewweb.engineering.redhat.com/brew/taskinfo?taskID=18850510
+
+Starting with driver version 1.5.0, in case of a surprise device
+unplug, there is a race caused by invoking ena_destroy_device()
+from two different places. As a result, the readless register might
+be accessed after it was destroyed.
+
+Signed-off-by: Netanel Belgazal <netanel@amazon.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+(cherry picked from commit 772ed869f535b4ec2b134645c951ff22de4d3f79)
+Signed-off-by: John W. Linville <linville@redhat.com>
+---
+ drivers/net/ethernet/amazon/ena/ena_netdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/ethernet/amazon/ena/ena_netdev.c b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+index 4ae8749699bb..9eb1e2da8a2d 100644
+--- a/drivers/net/ethernet/amazon/ena/ena_netdev.c
++++ b/drivers/net/ethernet/amazon/ena/ena_netdev.c
+@@ -3429,12 +3429,12 @@ static void ena_remove(struct pci_dev *pdev)
+ 		netdev->rx_cpu_rmap = NULL;
+ 	}
+ #endif /* CONFIG_RFS_ACCEL */
+-
+-	unregister_netdev(netdev);
+ 	del_timer_sync(&adapter->timer_service);
+ 
+ 	cancel_work_sync(&adapter->reset_task);
+ 
++	unregister_netdev(netdev);
++
+ 	/* Reset the device only if the device is running. */
+ 	if (test_bit(ENA_FLAG_DEVICE_RUNNING, &adapter->flags))
+ 		ena_com_dev_reset(ena_dev, adapter->reset_reason);
+-- 
+2.17.1
+
+

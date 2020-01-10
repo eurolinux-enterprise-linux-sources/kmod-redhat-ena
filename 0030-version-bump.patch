@@ -1,0 +1,13 @@
+Index: src/drivers/net/ethernet/amazon/ena/ena_netdev.h
+===================================================================
+--- src.orig/drivers/net/ethernet/amazon/ena/ena_netdev.h	2018-11-01 09:00:56.299692336 +0100
++++ src/drivers/net/ethernet/amazon/ena/ena_netdev.h	2018-11-01 09:07:38.561437090 +0100
+@@ -52,7 +52,7 @@
+ #define DRV_MODULE_VERSION \
+ 	__stringify(DRV_MODULE_VER_MAJOR) "."	\
+ 	__stringify(DRV_MODULE_VER_MINOR) "."	\
+-	__stringify(DRV_MODULE_VER_SUBMINOR) "K"
++	__stringify(DRV_MODULE_VER_SUBMINOR) "K_dup7.6"
+ #endif
+ 
+ #define DEVICE_NAME	"Elastic Network Adapter (ENA)"
